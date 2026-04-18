@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('muestra la pantalla de inicio de sesion', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const titleElement = screen.getByRole('heading', { name: /iniciar sesion/i });
+  expect(titleElement).toBeInTheDocument();
 });
