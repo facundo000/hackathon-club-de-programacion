@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import CoinStoreModal from './CoinStoreModal';
 import logoBoardGame from '../assets/2RecursoLogo2.svg';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,6 +8,9 @@ const iconBaseClass =
   'h-5 w-5 text-slate-900 transition group-hover:text-slate-700 group-focus-visible:text-slate-700';
 
 function AppHeader() {
+  const [coinStoreOpen, setCoinStoreOpen] = useState(false);
+  const coinBalance = 1250;
+
   const { user } = useAuth();
   const initials = user?.displayName
     ? user.displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
@@ -63,14 +68,17 @@ function AppHeader() {
           </button>
           <button
             type="button"
+            onClick={() => setCoinStoreOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={coinStoreOpen}
             className="rounded-full bg-orange-500 px-2.5 py-1.5 outline-none transition hover:bg-orange-400 focus-visible:ring-2 focus-visible:ring-orange-400"
-            aria-label="Coins disponibles: 1,250"
+            aria-label={`Abrir tienda de monedas. Balance: ${coinBalance.toLocaleString('es-AR')}`}
           >
             <span className="flex items-center gap-1.5 text-sm font-semibold text-white">
               <span className="grid h-4 w-4 place-items-center rounded-full bg-white/20 text-[10px] leading-none">
                 ¤
               </span>
-              1,250
+              {coinBalance.toLocaleString('es-AR')}
             </span>
           </button>
           <button
@@ -99,6 +107,8 @@ function AppHeader() {
           </Link>
         </nav>
       </div>
+
+      <CoinStoreModal open={coinStoreOpen} onClose={() => setCoinStoreOpen(false)} balance={coinBalance} />
     </header>
   );
 }
