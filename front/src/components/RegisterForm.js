@@ -2,6 +2,8 @@ import { useRegisterForm } from '../hooks/useRegisterForm';
 
 export function RegisterForm({ onSwitchToLogin }) {
   const {
+    username,
+    setUsername,
     email,
     setEmail,
     password,
@@ -9,11 +11,14 @@ export function RegisterForm({ onSwitchToLogin }) {
     confirmPassword,
     setConfirmPassword,
     wasSubmitted,
+    isUsernameValid,
     isEmailValid,
     isPasswordValid,
     passwordsMatch,
+    serverError,
+    isLoading,
     handleSubmit,
-  } = useRegisterForm();
+  } = useRegisterForm({ onSuccess: onSwitchToLogin });
 
   return (
     <>
@@ -25,6 +30,26 @@ export function RegisterForm({ onSwitchToLogin }) {
       </header>
 
       <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-200" htmlFor="register-username">
+            Nombre de usuario
+          </label>
+          <input
+            id="register-username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/40"
+            placeholder="minimo 3 caracteres"
+            aria-invalid={wasSubmitted && !isUsernameValid}
+          />
+          {wasSubmitted && !isUsernameValid ? (
+            <p className="mt-2 text-sm text-rose-400">El usuario debe tener al menos 3 caracteres.</p>
+          ) : null}
+        </div>
+
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-200" htmlFor="register-email">
             Correo electronico
@@ -90,12 +115,16 @@ export function RegisterForm({ onSwitchToLogin }) {
           ) : null}
         </div>
 
+        {serverError ? (
+          <p className="text-sm text-rose-400">{serverError}</p>
+        ) : null}
+
         <button
           type="submit"
+          disabled={isLoading}
           className="w-full rounded-lg bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:bg-violet-500/60"
-          disabled={!email && !password && !confirmPassword}
         >
-          Crear cuenta
+          {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
         </button>
       </form>
 

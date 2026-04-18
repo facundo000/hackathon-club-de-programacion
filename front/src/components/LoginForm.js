@@ -11,6 +11,8 @@ export function LoginForm({ onSwitchToRegister }) {
     wasSubmitted,
     isEmailValid,
     isPasswordValid,
+    serverError,
+    isLoading,
     handleSubmit,
   } = useLoginForm();
 
@@ -83,12 +85,16 @@ export function LoginForm({ onSwitchToRegister }) {
           </a>
         </div>
 
+        {serverError ? (
+          <p className="text-sm text-rose-400">{serverError}</p>
+        ) : null}
+
         <button
           type="submit"
+          disabled={isLoading}
           className="w-full rounded-lg bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:bg-violet-500/60"
-          disabled={!email && !password}
         >
-          Entrar
+          {isLoading ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
 
