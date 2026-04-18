@@ -36,20 +36,23 @@ const addComment = async (userId, postId, content) => {
   return post.comments;
 };
 
-const getFeed = async (userId, page = 1) => {
+const getFeed = async (userId, page = 1, authorId) => {
   const limit = 20;
   const forums = await Forum.find({ members: userId }).select('_id');
   const forumIds = forums.map((f) => f._id);
 
+  const filter = { forum: { $in: forumIds } };
+  if (authorId) filter.author = authorId;
+
   const [posts, total] = await Promise.all([
-    Post.find({ forum: { $in: forumIds } })
+    Post.find(filter)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .populate('author', 'username avatar')
       .populate('forum', 'name avatar')
       .lean(),
-    Post.countDocuments({ forum: { $in: forumIds } }),
+    Post.countDocuments(filter),
   ]);
 
   const enriched = posts.map((post) => ({

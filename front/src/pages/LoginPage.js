@@ -1,42 +1,37 @@
+import { useState } from 'react';
+import { LoginForm } from '../components/LoginForm';
+import { RegisterForm } from '../components/RegisterForm';
+
 function LoginPage() {
+  const [authView, setAuthView] = useState('login');
+
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-12 text-slate-100">
-      <main className="mx-auto w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/80">
-        <h1 className="text-2xl font-bold text-white">Iniciar sesion</h1>
-        <p className="mt-2 text-sm text-slate-300">Ingresa para acceder a BoardGame Social.</p>
-
-        <form className="mt-6 space-y-4">
+      <main className="mx-auto flex w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl shadow-slate-950/80">
+        <section className="hidden w-1/2 flex-col justify-between bg-gradient-to-br from-indigo-700 via-violet-700 to-fuchsia-700 p-10 lg:flex">
           <div>
-            <label className="mb-1 block text-sm text-slate-200" htmlFor="email">
-              Correo electronico
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="tucorreo@ejemplo.com"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/40"
-            />
+            <p className="mb-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              BoardMatch
+            </p>
+            <h1 className="text-3xl font-bold leading-tight">
+              Tu red social para descubrir y jugar juegos de mesa
+            </h1>
+            <p className="mt-4 max-w-sm text-sm text-violet-100">
+              Conecta con personas de tu zona, crea mesas, y encuentra partidas segun tus gustos.
+            </p>
           </div>
+          <p className="text-sm text-violet-100/90">
+            "Cada partida comienza con una buena conexion."
+          </p>
+        </section>
 
-          <div>
-            <label className="mb-1 block text-sm text-slate-200" htmlFor="password">
-              Contrasena
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="********"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/40"
-            />
-          </div>
-
-          <button
-            type="button"
-            className="w-full rounded-lg bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400"
-          >
-            Entrar
-          </button>
-        </form>
+        <section className="w-full p-6 sm:p-10 lg:w-1/2">
+          {authView === 'register' ? (
+            <RegisterForm onSwitchToLogin={() => setAuthView('login')} />
+          ) : (
+            <LoginForm onSwitchToRegister={() => setAuthView('register')} />
+          )}
+        </section>
       </main>
     </div>
   );

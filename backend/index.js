@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const routes = require('./src/routes');
 
@@ -7,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/hackaton';
 
+app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
 
 app.get('/', (req, res) => {

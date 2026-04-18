@@ -1,21 +1,31 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { forumsApi } from '../api';
+import { useAuth } from '../context/AuthContext';
 
 const menuItems = [
-  { id: 'mis-juegos', label: 'Mis Juegos', badge: null, path: null },
-  { id: 'grupos', label: 'Grupos', badge: 12, path: null },
-  { id: 'eventos', label: 'Eventos', badge: 3, path: '/eventos' },
+  { id: 'mis-juegos', label: 'Mis Juegos', badge: null, path: '/juegos-favoritos' },
+  { id: 'grupos', label: 'Grupos', badge: null, path: null },
+  { id: 'eventos', label: 'Eventos', badge: null, path: '/eventos' },
   { id: 'torneos', label: 'Torneos', badge: null, path: null },
   { id: 'tendencias', label: 'Tendencias', badge: null, path: null },
 ];
 
-const suggestedGroups = [
-  { id: 'catan', name: 'Amantes de Catan', members: '1.2k miembros' },
-  { id: 'estrategia', name: 'Estrategia Profunda', members: '856 miembros' },
-  { id: 'cartas', name: 'Juegos de Cartas', members: '3k miembros' },
-];
 
-function LeftSidebar() {
+function LeftSidebar({ selectedForumId, onForumSelect }) {
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [forums, setForums] = useState([]);
+
+  useEffect(() => {
+    forumsApi.getAll().then(setForums).catch(() => {});
+  }, []);
+
+  const initials = user?.displayName
+    ? user.displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+    : user?.username?.slice(0, 2).toUpperCase() ?? '?';
+
+  const displayName = user?.displayName || user?.username || 'Usuario';
 
   const handleMenuClick = (item) => {
     if (item.path) navigate(item.path);
@@ -26,27 +36,27 @@ function LeftSidebar() {
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <span className="grid h-10 w-10 place-items-center rounded-lg bg-fuchsia-100 text-sm font-bold text-fuchsia-700">
-            JP
+            {initials}
           </span>
           <div>
-            <h2 className="text-sm font-semibold text-slate-900">Juan Perez</h2>
-            <a className="text-xs text-slate-500 hover:text-slate-700" href="#perfil">
+            <h2 className="text-sm font-semibold text-slate-900">{displayName}</h2>
+            <Link className="text-xs text-slate-500 hover:text-slate-700" to="/perfil">
               Ver perfil
-            </a>
+            </Link>
           </div>
         </div>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3">
           <div>
-            <dt className="text-lg font-semibold leading-none text-slate-800">156</dt>
+            <dt className="text-lg font-semibold leading-none text-slate-800">7</dt>
             <dd className="text-[11px] text-slate-500">Juegos</dd>
           </div>
           <div>
-            <dt className="text-lg font-semibold leading-none text-slate-800">2.4k</dt>
+            <dt className="text-lg font-semibold leading-none text-slate-800">4</dt>
             <dd className="text-[11px] text-slate-500">Amigos</dd>
           </div>
           <div>
-            <dt className="text-lg font-semibold leading-none text-slate-800">89</dt>
+            <dt className="text-lg font-semibold leading-none text-slate-800">190</dt>
             <dd className="text-[11px] text-slate-500">Partidas</dd>
           </div>
         </dl>
@@ -74,18 +84,50 @@ function LeftSidebar() {
       </nav>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="text-sm font-semibold text-slate-900">Grupos Sugeridos</h3>
-        <ul className="mt-3 space-y-3">
-          {suggestedGroups.map((group) => (
-            <li key={group.id} className="flex items-center gap-3">
-              <span className="h-9 w-9 rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500" aria-hidden="true" />
-              <div>
-                <p className="text-sm font-medium leading-tight text-slate-800">{group.name}</p>
-                <p className="text-xs text-slate-500">{group.members}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-900">Grupos</h3>
+          {selectedForumId && (
+            <button
+              type="button"
+              onClick={() => onForumSelect?.(null)}
+              className="text-xs text-violet-500 hover:text-violet-700"
+            >
+              Ver todo
+            </button>
+          )}
+        </div>
+        {forums.length === 0 ? (
+          <p className="mt-3 text-xs text-slate-400">No hay grupos todavía.</p>
+        ) : (
+          <ul className="mt-3 space-y-1">
+            {forums.map((forum) => {
+              const isActive = selectedForumId === forum._id;
+              return (
+                <li key={forum._id}>
+                  <button
+                    type="button"
+                    onClick={() => onForumSelect?.(isActive ? null : forum._id)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition ${
+                      isActive
+                        ? 'bg-violet-50 ring-1 ring-violet-200'
+                        : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="h-8 w-8 flex-none rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className={`text-sm font-medium leading-tight ${isActive ? 'text-violet-700' : 'text-slate-800'}`}>
+                        {forum.name}
+                      </p>
+                      {forum.description ? (
+                        <p className="truncate text-xs text-slate-500">{forum.description}</p>
+                      ) : null}
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
     </aside>
   );

@@ -33,7 +33,7 @@ export function useLoginForm() {
     try {
       const { token, user } = await authApi.login({ email, password });
       login(token, user);
-      navigate('/home');
+      navigate('/dashboard');
     } catch (err) {
       setServerError(err.message);
     } finally {

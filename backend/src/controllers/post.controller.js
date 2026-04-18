@@ -39,7 +39,7 @@ const addComment = async (req, res) => {
 
 const getFeed = async (req, res) => {
   try {
-    const posts = await postService.getFeed(req.user.id, req.query.page);
+    const posts = await postService.getFeed(req.user.id, req.query.page, req.query.authorId);
     res.json(posts);
   } catch (e) {
     res.status(500).json({ error: e.message });

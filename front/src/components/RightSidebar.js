@@ -1,17 +1,35 @@
+import { useEffect, useState } from 'react';
+import { authApi, eventsApi } from '../api';
+
 const upcomingEvents = [
-  { id: 'e1', dateLine: '20 Abr', timeLine: '18:00', title: 'Torneo Catan' },
-  { id: 'e2', dateLine: '22 Abr', timeLine: '19:30', title: 'Noche de juegos' },
-  { id: 'e3', dateLine: '25 Abr', timeLine: '17:00', title: 'Meetup estrategia' },
+  { id: 'e1', dateLine: '21 Abr', timeLine: '18:00', title: 'Tarde de Catan en el Café Lúdico', game: 'Catan' },
+  { id: 'e2', dateLine: '22 Abr', timeLine: '19:00', title: 'Iniciación a Wingspan', game: 'Wingspan' },
+  { id: 'e3', dateLine: '25 Abr', timeLine: '17:00', title: 'Pandemic en línea - Discord', game: 'Pandemic' },
 ];
 
-const contacts = [
-  { id: 'c1', name: 'María García', initials: 'MG', color: 'bg-rose-100 text-rose-700' },
-  { id: 'c2', name: 'Carlos López', initials: 'CL', color: 'bg-sky-100 text-sky-700' },
-  { id: 'c3', name: 'Ana Martínez', initials: 'AM', color: 'bg-amber-100 text-amber-800' },
-  { id: 'c4', name: 'Luis Rodríguez', initials: 'LR', color: 'bg-emerald-100 text-emerald-800' },
+const CONTACT_COLORS = [
+  'bg-rose-100 text-rose-700',
+  'bg-sky-100 text-sky-700',
+  'bg-amber-100 text-amber-800',
+  'bg-emerald-100 text-emerald-800',
+  'bg-violet-100 text-violet-700',
+  'bg-fuchsia-100 text-fuchsia-700',
 ];
 
-function RightSidebar() {
+function RightSidebar({ selectedAuthorId, onAuthorSelect }) {
+  const [following, setFollowing] = useState([]);
+
+  useEffect(() => {
+    authApi.getMe().then((profile) => setFollowing(profile.following ?? [])).catch(() => {});
+  }, []);
+
+  const contacts = following.length > 0 ? following : [
+    { _id: 'c1', displayName: 'Marta Gómez' },
+    { _id: 'c2', displayName: 'Juan Diego' },
+    { _id: 'c3', displayName: 'Laura Sánchez' },
+    { _id: 'c4', displayName: 'Miguel Torres' },
+  ];
+
   return (
     <aside className="space-y-4" aria-label="Barra lateral derecha">
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -25,6 +43,7 @@ function RightSidebar() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium leading-snug text-slate-800">{event.title}</p>
+                <p className="text-xs text-slate-500">{event.game}</p>
               </div>
             </li>
           ))}
@@ -37,18 +56,42 @@ function RightSidebar() {
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">Contactos</h2>
-        <ul className="mt-3 space-y-2">
-          {contacts.map((contact) => (
-            <li key={contact.id} className="flex items-center gap-3 rounded-lg py-1">
-              <span
-                className={`grid h-9 w-9 flex-none place-items-center rounded-full text-xs font-bold ${contact.color}`}
-              >
-                {contact.initials}
-              </span>
-              <span className="truncate text-sm text-slate-800">{contact.name}</span>
-            </li>
-          ))}
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-900">Contactos</h2>
+          {selectedAuthorId && (
+            <button
+              type="button"
+              onClick={() => onAuthorSelect?.(null)}
+              className="text-xs text-violet-500 hover:text-violet-700"
+            >
+              Ver todo
+            </button>
+          )}
+        </div>
+        <ul className="mt-3 space-y-1">
+          {contacts.slice(0, 6).map((contact, i) => {
+            const name = contact.displayName || contact.username || 'Usuario';
+            const initials = name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+            const isActive = selectedAuthorId === contact._id;
+            return (
+              <li key={contact._id}>
+                <button
+                  type="button"
+                  onClick={() => onAuthorSelect?.(isActive ? null : contact._id)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition ${
+                    isActive ? 'bg-violet-50 ring-1 ring-violet-200' : 'hover:bg-slate-50'
+                  }`}
+                >
+                  <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-xs font-bold ${CONTACT_COLORS[i % CONTACT_COLORS.length]}`}>
+                    {initials}
+                  </span>
+                  <span className={`truncate text-sm ${isActive ? 'font-semibold text-violet-700' : 'text-slate-800'}`}>
+                    {name}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </section>
     </aside>

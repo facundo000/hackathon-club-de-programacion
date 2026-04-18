@@ -1,20 +1,26 @@
+import { Link } from 'react-router-dom';
 import logoBoardGame from '../assets/2RecursoLogo2.svg';
+import { useAuth } from '../context/AuthContext';
 
 const iconBaseClass =
   'h-5 w-5 text-slate-900 transition group-hover:text-slate-700 group-focus-visible:text-slate-700';
 
 function AppHeader() {
+  const { user } = useAuth();
+  const initials = user?.displayName
+    ? user.displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+    : user?.username?.slice(0, 2).toUpperCase() ?? '?';
+
   return (
     <header className="border-b border-slate-200 bg-white px-3 py-2 sm:px-4">
       <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-3 md:flex-nowrap">
-        <a className="flex min-w-0 items-center gap-2" href="#inicio">
-          <img
-            src={logoBoardGame}
-            alt="BoardGame Social"
-            className="h-8 w-auto sm:h-9"
-          />
-          <span className="sr-only">BoardGame Social</span>
-        </a>
+        <Link
+          className="flex min-w-0 items-center gap-2 outline-none ring-violet-500 transition hover:opacity-90 focus-visible:rounded-md focus-visible:ring-2"
+          to="/dashboard"
+          aria-label="BoardGame Social, ir al inicio"
+        >
+          <img src={logoBoardGame} alt="" className="h-8 w-auto sm:h-9" />
+        </Link>
 
         <div className="order-3 w-full md:order-none md:flex-1">
           <label className="sr-only" htmlFor="search">
@@ -82,15 +88,15 @@ function AppHeader() {
             </svg>
           </button>
 
-          <button
-            type="button"
+          <Link
+            to="/perfil"
             className="rounded-full border border-fuchsia-300 bg-fuchsia-100 p-0.5 outline-none transition hover:bg-fuchsia-200 focus-visible:ring-2 focus-visible:ring-violet-500"
             aria-label="Perfil de usuario"
           >
             <span className="grid h-8 w-8 place-items-center rounded-full bg-fuchsia-500 text-xs font-bold text-white">
-              Y
+              {initials}
             </span>
-          </button>
+          </Link>
         </nav>
       </div>
     </header>
