@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
+
 const menuItems = [
-  { id: 'mis-juegos', label: 'Mis Juegos', badge: null },
-  { id: 'grupos', label: 'Grupos', badge: 12 },
-  { id: 'eventos', label: 'Eventos', badge: 3 },
-  { id: 'torneos', label: 'Torneos', badge: null },
-  { id: 'tendencias', label: 'Tendencias', badge: null },
+  { id: 'mis-juegos', label: 'Mis Juegos', badge: null, path: null },
+  { id: 'grupos', label: 'Grupos', badge: 12, path: null },
+  { id: 'eventos', label: 'Eventos', badge: 3, path: '/eventos' },
+  { id: 'torneos', label: 'Torneos', badge: null, path: null },
+  { id: 'tendencias', label: 'Tendencias', badge: null, path: null },
 ];
 
 const suggestedGroups = [
@@ -13,6 +15,12 @@ const suggestedGroups = [
 ];
 
 function LeftSidebar() {
+  const navigate = useNavigate();
+
+  const handleMenuClick = (item) => {
+    if (item.path) navigate(item.path);
+  };
+
   return (
     <aside className="space-y-4" aria-label="Barra lateral izquierda">
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -50,6 +58,7 @@ function LeftSidebar() {
             <li key={item.id}>
               <button
                 type="button"
+                onClick={() => handleMenuClick(item)}
                 className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
               >
                 <span>{item.label}</span>

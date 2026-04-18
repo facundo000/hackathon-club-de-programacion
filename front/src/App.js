@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
+import EventsPage from './pages/EventsPage';
 import LoginPage from './pages/LoginPage';
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/Dashboardd" element={<DashboardPage />} />
+        <Route path="/eventos" element={<EventsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<Navigate to="/Dashboardd" replace />} />
         <Route path="*" element={<Navigate to="/Dashboardd" replace />} />
