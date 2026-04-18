@@ -4,7 +4,7 @@ import App from './App';
 test('muestra dashboard en la ruta por defecto', () => {
   window.history.pushState({}, '', '/');
   render(<App />);
-  const brandElement = screen.getByText(/boardgame social/i);
+  const brandElement = screen.getByRole('link', { name: /boardgame social/i });
   const searchElement = screen.getByPlaceholderText(/buscar juegos, personas, grupos/i);
   const composerElement = screen.getByPlaceholderText(/que juego has jugado hoy/i);
   const publishButton = screen.getByRole('button', { name: /publicar/i });
