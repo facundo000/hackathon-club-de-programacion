@@ -50,15 +50,19 @@ function AppHeader() {
         </div>
 
         <nav aria-label="Acciones principales" className="ml-auto flex items-center gap-1 sm:gap-2">
-          <button
-            type="button"
+          <Link
+            to="/dashboard"
             className="group rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-            aria-label="Inicio"
+            aria-label="Ir al inicio"
+            onClick={() => {
+              setCoinStoreOpen(false);
+              setNotificationsOpen(false);
+            }}
           >
             <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M3 11.5l9-7 9 7M5.5 10v10h13V10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
+          </Link>
           <button
             type="button"
             className="group rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
