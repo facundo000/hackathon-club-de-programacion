@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EventCard from './EventCard';
 
 const BASE_EVENTS = [

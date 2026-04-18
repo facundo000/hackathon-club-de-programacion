@@ -17,18 +17,11 @@ const CONTACT_COLORS = [
 ];
 
 function RightSidebar({ selectedAuthorId, onAuthorSelect }) {
-  const [following, setFollowing] = useState([]);
+  const [following, setFollowing] = useState(null);
 
   useEffect(() => {
-    authApi.getMe().then((profile) => setFollowing(profile.following ?? [])).catch(() => {});
+    authApi.getMe().then((profile) => setFollowing(profile.following ?? [])).catch(() => setFollowing([]));
   }, []);
-
-  const contacts = following.length > 0 ? following : [
-    { _id: 'c1', displayName: 'Marta Gómez' },
-    { _id: 'c2', displayName: 'Juan Diego' },
-    { _id: 'c3', displayName: 'Laura Sánchez' },
-    { _id: 'c4', displayName: 'Miguel Torres' },
-  ];
 
   return (
     <aside className="space-y-4" aria-label="Barra lateral derecha">
@@ -68,31 +61,37 @@ function RightSidebar({ selectedAuthorId, onAuthorSelect }) {
             </button>
           )}
         </div>
-        <ul className="mt-3 space-y-1">
-          {contacts.slice(0, 6).map((contact, i) => {
-            const name = contact.displayName || contact.username || 'Usuario';
-            const initials = name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
-            const isActive = selectedAuthorId === contact._id;
-            return (
-              <li key={contact._id}>
-                <button
-                  type="button"
-                  onClick={() => onAuthorSelect?.(isActive ? null : contact._id)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition ${
-                    isActive ? 'bg-violet-50 ring-1 ring-violet-200' : 'hover:bg-slate-50'
-                  }`}
-                >
-                  <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-xs font-bold ${CONTACT_COLORS[i % CONTACT_COLORS.length]}`}>
-                    {initials}
-                  </span>
-                  <span className={`truncate text-sm ${isActive ? 'font-semibold text-violet-700' : 'text-slate-800'}`}>
-                    {name}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        {following === null ? (
+          <p className="mt-3 text-xs text-slate-400">Cargando...</p>
+        ) : following.length === 0 ? (
+          <p className="mt-3 text-xs text-slate-400">No seguís a nadie todavía.</p>
+        ) : (
+          <ul className="mt-3 space-y-1">
+            {following.slice(0, 6).map((contact, i) => {
+              const name = contact.displayName || contact.username || 'Usuario';
+              const initials = name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+              const isActive = selectedAuthorId === contact._id;
+              return (
+                <li key={contact._id}>
+                  <button
+                    type="button"
+                    onClick={() => onAuthorSelect?.(isActive ? null : contact._id)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition ${
+                      isActive ? 'bg-violet-50 ring-1 ring-violet-200' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-xs font-bold ${CONTACT_COLORS[i % CONTACT_COLORS.length]}`}>
+                      {initials}
+                    </span>
+                    <span className={`truncate text-sm ${isActive ? 'font-semibold text-violet-700' : 'text-slate-800'}`}>
+                      {name}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
     </aside>
   );
