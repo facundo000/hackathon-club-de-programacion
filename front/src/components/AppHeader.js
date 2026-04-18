@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CoinStoreModal from './CoinStoreModal';
+import NotificationsDropdown from './NotificationsDropdown';
 import logoBoardGame from '../assets/2RecursoLogo2.svg';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,6 +10,8 @@ const iconBaseClass =
 
 function AppHeader() {
   const [coinStoreOpen, setCoinStoreOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationsAnchorRef = useRef(null);
   const coinBalance = 1250;
 
   const { user } = useAuth();
@@ -81,20 +84,31 @@ function AppHeader() {
               {coinBalance.toLocaleString('es-AR')}
             </span>
           </button>
-          <button
-            type="button"
-            className="group relative rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-            aria-label="Notificaciones"
-          >
-            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" aria-hidden="true" />
-            <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path
-                d="M12 4a5 5 0 00-5 5v3.7L5 15v1h14v-1l-2-2.3V9a5 5 0 00-5-5zM9.5 18a2.5 2.5 0 005 0"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+          <div ref={notificationsAnchorRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setNotificationsOpen((o) => !o)}
+              aria-expanded={notificationsOpen}
+              aria-haspopup="dialog"
+              aria-controls={notificationsOpen ? 'notifications-panel' : undefined}
+              className="group relative rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+              aria-label="Notificaciones"
+            >
+              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" aria-hidden="true" />
+              <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  d="M12 4a5 5 0 00-5 5v3.7L5 15v1h14v-1l-2-2.3V9a5 5 0 00-5-5zM9.5 18a2.5 2.5 0 005 0"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+            <NotificationsDropdown
+              open={notificationsOpen}
+              onClose={() => setNotificationsOpen(false)}
+              anchorRef={notificationsAnchorRef}
+            />
+          </div>
 
           <Link
             to="/perfil"
