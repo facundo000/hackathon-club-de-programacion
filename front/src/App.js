@@ -1,11 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
+import EventsPage from './pages/EventsPage';
 import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
     <Routes>
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/eventos" element={<EventsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
