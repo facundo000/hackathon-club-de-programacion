@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const menuItems = [
-  { id: 'mis-juegos', label: 'Mis Juegos', badge: null, path: null },
+  { id: 'mis-juegos', label: 'Mis Juegos', badge: null, path: '/perfil' },
   { id: 'grupos', label: 'Grupos', badge: 12, path: null },
   { id: 'eventos', label: 'Eventos', badge: 3, path: '/eventos' },
   { id: 'torneos', label: 'Torneos', badge: null, path: null },
@@ -30,9 +30,9 @@ function LeftSidebar() {
           </span>
           <div>
             <h2 className="text-sm font-semibold text-slate-900">Juan Perez</h2>
-            <a className="text-xs text-slate-500 hover:text-slate-700" href="#perfil">
+            <Link className="text-xs text-slate-500 hover:text-slate-700" to="/perfil">
               Ver perfil
-            </a>
+            </Link>
           </div>
         </div>
 
