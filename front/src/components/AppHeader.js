@@ -1,4 +1,7 @@
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import CoinStoreModal from './CoinStoreModal';
+import NotificationsDropdown from './NotificationsDropdown';
 import logoBoardGame from '../assets/2RecursoLogo2.svg';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,6 +9,11 @@ const iconBaseClass =
   'h-5 w-5 text-slate-900 transition group-hover:text-slate-700 group-focus-visible:text-slate-700';
 
 function AppHeader() {
+  const [coinStoreOpen, setCoinStoreOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationsAnchorRef = useRef(null);
+  const coinBalance = 1250;
+
   const { user } = useAuth();
   const initials = user?.displayName
     ? user.displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
@@ -42,15 +50,19 @@ function AppHeader() {
         </div>
 
         <nav aria-label="Acciones principales" className="ml-auto flex items-center gap-1 sm:gap-2">
-          <button
-            type="button"
+          <Link
+            to="/dashboard"
             className="group rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-            aria-label="Inicio"
+            aria-label="Ir al inicio"
+            onClick={() => {
+              setCoinStoreOpen(false);
+              setNotificationsOpen(false);
+            }}
           >
             <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M3 11.5l9-7 9 7M5.5 10v10h13V10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
+          </Link>
           <button
             type="button"
             className="group rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
@@ -63,30 +75,44 @@ function AppHeader() {
           </button>
           <button
             type="button"
+            onClick={() => setCoinStoreOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={coinStoreOpen}
             className="rounded-full bg-orange-500 px-2.5 py-1.5 outline-none transition hover:bg-orange-400 focus-visible:ring-2 focus-visible:ring-orange-400"
-            aria-label="Coins disponibles: 1,250"
+            aria-label={`Abrir tienda de monedas. Balance: ${coinBalance.toLocaleString('es-AR')}`}
           >
             <span className="flex items-center gap-1.5 text-sm font-semibold text-white">
               <span className="grid h-4 w-4 place-items-center rounded-full bg-white/20 text-[10px] leading-none">
                 ¤
               </span>
-              1,250
+              {coinBalance.toLocaleString('es-AR')}
             </span>
           </button>
-          <button
-            type="button"
-            className="group relative rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-            aria-label="Notificaciones"
-          >
-            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" aria-hidden="true" />
-            <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path
-                d="M12 4a5 5 0 00-5 5v3.7L5 15v1h14v-1l-2-2.3V9a5 5 0 00-5-5zM9.5 18a2.5 2.5 0 005 0"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+          <div ref={notificationsAnchorRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setNotificationsOpen((o) => !o)}
+              aria-expanded={notificationsOpen}
+              aria-haspopup="dialog"
+              aria-controls={notificationsOpen ? 'notifications-panel' : undefined}
+              className="group relative rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+              aria-label="Notificaciones"
+            >
+              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" aria-hidden="true" />
+              <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  d="M12 4a5 5 0 00-5 5v3.7L5 15v1h14v-1l-2-2.3V9a5 5 0 00-5-5zM9.5 18a2.5 2.5 0 005 0"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+            <NotificationsDropdown
+              open={notificationsOpen}
+              onClose={() => setNotificationsOpen(false)}
+              anchorRef={notificationsAnchorRef}
+            />
+          </div>
 
           <Link
             to="/perfil"
@@ -99,6 +125,8 @@ function AppHeader() {
           </Link>
         </nav>
       </div>
+
+      <CoinStoreModal open={coinStoreOpen} onClose={() => setCoinStoreOpen(false)} balance={coinBalance} />
     </header>
   );
 }
