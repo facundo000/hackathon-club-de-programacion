@@ -2,6 +2,23 @@ import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EventCard from './EventCard';
 
+const USER_POOL = [
+  { id: 'u1',  name: 'María García',      initials: 'MG', color: 'bg-rose-200 text-rose-800' },
+  { id: 'u2',  name: 'Carlos López',      initials: 'CL', color: 'bg-sky-200 text-sky-800' },
+  { id: 'u3',  name: 'Ana Martínez',      initials: 'AM', color: 'bg-amber-200 text-amber-800' },
+  { id: 'u4',  name: 'Luis Rodríguez',    initials: 'LR', color: 'bg-emerald-200 text-emerald-800' },
+  { id: 'u5',  name: 'Sofía Fernández',   initials: 'SF', color: 'bg-fuchsia-200 text-fuchsia-800' },
+  { id: 'u6',  name: 'Diego Pérez',       initials: 'DP', color: 'bg-indigo-200 text-indigo-800' },
+  { id: 'u7',  name: 'Valentina Suárez',  initials: 'VS', color: 'bg-orange-200 text-orange-800' },
+  { id: 'u8',  name: 'Mateo Ruiz',        initials: 'MR', color: 'bg-teal-200 text-teal-800' },
+  { id: 'u9',  name: 'Julieta Benítez',   initials: 'JB', color: 'bg-pink-200 text-pink-800' },
+  { id: 'u10', name: 'Tomás Romero',      initials: 'TR', color: 'bg-cyan-200 text-cyan-800' },
+  { id: 'u11', name: 'Camila Acosta',     initials: 'CA', color: 'bg-violet-200 text-violet-800' },
+  { id: 'u12', name: 'Nicolás Ibáñez',    initials: 'NI', color: 'bg-lime-200 text-lime-800' },
+];
+
+const pick = (indices) => indices.map((i) => USER_POOL[i]);
+
 const BASE_EVENTS = [
   {
     title: 'Torneo de Catan',
@@ -10,8 +27,10 @@ const BASE_EVENTS = [
     timeLine: '18:00',
     description: 'Competencia clásica con premios para los tres primeros puestos. Inscripción abierta para jugadores de todos los niveles.',
     location: 'Club Central',
-    attendees: 48,
+    players: pick([0, 1, 3, 5, 7]),
+    maxPlayers: 8,
     gradient: 'from-amber-400 via-orange-500 to-rose-500',
+    image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Noche de Magic: The Gathering',
@@ -20,8 +39,10 @@ const BASE_EVENTS = [
     timeLine: '19:30',
     description: 'Draft con el último set y mesas libres para jugar commander. Traé tu mazo o armá uno en el lugar.',
     location: 'Bar Los Dados',
-    attendees: 24,
+    players: pick([2, 4, 6]),
+    maxPlayers: 8,
     gradient: 'from-fuchsia-500 via-purple-600 to-indigo-700',
+    image: 'https://images.unsplash.com/photo-1529480780520-8b4d69ffa271?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Campeonato de Ajedrez',
@@ -30,8 +51,10 @@ const BASE_EVENTS = [
     timeLine: '17:00',
     description: 'Sistema suizo a 5 rondas, ritmo 15+5. Abierto a todas las categorías, ideal para sumar rating.',
     location: 'Centro Cultural',
-    attendees: 62,
+    players: pick([0, 2, 4, 6, 8, 10, 11]),
+    maxPlayers: 16,
     gradient: 'from-slate-700 via-slate-900 to-black',
+    image: 'https://images.unsplash.com/photo-1528819622765-d6bcf132f793?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Meetup de Juegos Indie',
@@ -40,8 +63,10 @@ const BASE_EVENTS = [
     timeLine: '20:00',
     description: 'Probá prototipos de autores locales y charlá con los diseñadores. Pizza y cerveza de por medio.',
     location: 'Espacio Maker',
-    attendees: 31,
+    players: pick([1, 3, 5, 7, 9, 11]),
+    maxPlayers: 12,
     gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
+    image: 'https://images.unsplash.com/photo-1637858868799-7f26a0640eb6?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Noche de Dungeons & Dragons',
@@ -50,8 +75,10 @@ const BASE_EVENTS = [
     timeLine: '21:00',
     description: 'One-shot para principiantes con personajes pregenerados. DM experimentado y sesiones de 3 horas.',
     location: 'Librería Nocturna',
-    attendees: 16,
+    players: pick([0, 4, 8]),
+    maxPlayers: 5,
     gradient: 'from-rose-500 via-red-600 to-purple-700',
+    image: 'https://images.unsplash.com/photo-1605870445919-838d190e8e1b?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Torneo de Risk Legacy',
@@ -60,8 +87,10 @@ const BASE_EVENTS = [
     timeLine: '16:00',
     description: 'Arrancamos una campaña completa desde cero. Cupos limitados, compromiso de asistir a todas las sesiones.',
     location: 'Club Central',
-    attendees: 10,
+    players: pick([2, 5, 9, 10, 11]),
+    maxPlayers: 5,
     gradient: 'from-red-500 via-orange-600 to-yellow-500',
+    image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Jornada de Wargames',
@@ -70,8 +99,10 @@ const BASE_EVENTS = [
     timeLine: '14:00',
     description: 'Warhammer 40k y Age of Sigmar. Traé tu ejército pintado y participá de la votación de mejor pintura.',
     location: 'Salón Hobbies',
-    attendees: 38,
+    players: pick([1, 3, 6, 7]),
+    maxPlayers: 10,
     gradient: 'from-cyan-500 via-blue-600 to-indigo-800',
+    image: 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=900&q=80',
   },
   {
     title: 'Mesa abierta de Gloomhaven',
@@ -80,8 +111,10 @@ const BASE_EVENTS = [
     timeLine: '19:00',
     description: 'Campaña en curso buscando dos jugadores más. Nivel medio, se enseña la mecánica a quien no conozca.',
     location: 'Café Tablero',
-    attendees: 4,
+    players: pick([4]),
+    maxPlayers: 4,
     gradient: 'from-lime-400 via-emerald-500 to-green-700',
+    image: 'https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=900&q=80',
   },
 ];
 
