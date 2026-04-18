@@ -57,19 +57,22 @@ function AppHeader() {
           </button>
           <button
             type="button"
-            className="group rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
-            aria-label="Mensajes"
+            className="rounded-full bg-orange-500 px-2.5 py-1.5 outline-none transition hover:bg-orange-400 focus-visible:ring-2 focus-visible:ring-orange-400"
+            aria-label="Coins disponibles: 1,250"
           >
-            <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M5 4.5h14a1.5 1.5 0 011.5 1.5v9a1.5 1.5 0 01-1.5 1.5H9l-5.5 3v-13A1.5 1.5 0 015 4.5z" strokeWidth="2" />
-            </svg>
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-white">
+              <span className="grid h-4 w-4 place-items-center rounded-full bg-white/20 text-[10px] leading-none">
+                ¤
+              </span>
+              1,250
+            </span>
           </button>
           <button
             type="button"
             className="group relative rounded-md p-2 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-violet-500"
             aria-label="Notificaciones"
           >
-            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" />
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500" aria-hidden="true" />
             <svg aria-hidden="true" className={iconBaseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path
                 d="M12 4a5 5 0 00-5 5v3.7L5 15v1h14v-1l-2-2.3V9a5 5 0 00-5-5zM9.5 18a2.5 2.5 0 005 0"

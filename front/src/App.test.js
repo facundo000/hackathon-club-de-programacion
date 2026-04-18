@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('muestra el header principal', () => {
+test('muestra dashboard en la ruta por defecto', () => {
+  window.history.pushState({}, '', '/');
   render(<App />);
   const brandElement = screen.getByText(/boardgame social/i);
   const searchElement = screen.getByPlaceholderText(/buscar juegos, personas, grupos/i);
@@ -15,4 +16,11 @@ test('muestra el header principal', () => {
   expect(publishButton).toBeInTheDocument();
   expect(eventsHeading).toBeInTheDocument();
   expect(contactsHeading).toBeInTheDocument();
+});
+
+test('muestra login en la ruta /login', () => {
+  window.history.pushState({}, '', '/login');
+  render(<App />);
+  expect(screen.getByRole('heading', { name: /iniciar sesion/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
 });
